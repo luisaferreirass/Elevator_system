@@ -1,112 +1,112 @@
 <div align="center" style="padding-bottom: 80px;">
-<img align="right" alt="logo dimap" height="60" src="docs/assets/dimap.png">
-<img align="left" alt="logo ufrn" height="60" src="docs/assets/ufrn-logo.png">
+<img align="right" alt="dimap logo" height="60" src="docs/assets/dimap.png">
+<img align="left" alt="ufrn logo" height="60" src="docs/assets/ufrn-logo.png">
 </div>
 
 <div align="center">
 
-# 🏢 Sistema de Controle de Elevadores em VHDL
+# 🏢 Elevator Control System in VHDL
 
 </div>
 
-## 📝 Sobre o projeto
+## 📝 About the project
 
-Sistema completo para controle de **três elevadores** em um edifício de **32 andares (0 a 31)**, implementado em **VHDL**. O projeto utiliza uma arquitetura hierárquica de dois níveis com Máquinas de Estados Finitos (FSMs) para gerenciamento robusto e eficiente de múltiplos elevadores.
+A complete system to control **three elevators** in a **32-floor building (floors 0 to 31)**, implemented in **VHDL**. The project uses a two-level hierarchical architecture with Finite State Machines (FSMs) for robust and efficient management of multiple elevators.
 
-Desenvolvido como projeto final da disciplina **Circuitos Digitais** (UFRN), demonstrando conceitos avançados de:
-- Arquitetura hierárquica multinível
-- Máquinas de Estados Finitos (FSM)
-- Algoritmos de escalonamento
-- Sistemas de controle em tempo real
-- Design modular em VHDL
-- Simulação e validação com testbenches
+Developed as the final project for the **Digital Circuits** course (UFRN), demonstrating advanced concepts such as:
+- Multi-level hierarchical architecture
+- Finite State Machines (FSM)
+- Scheduling algorithms
+- Real-time control systems
+- Modular design in VHDL
+- Simulation and validation with testbenches
 
 **Professor:** Márcio Eduardo Kreutz  
-**Data:** Outubro de 2025
+**Date:** October 2025
 
-> 📄 Para mais detalhes, acesse o [relatório completo](docs/report/Trabalho_Circuitos.pdf).
+> 📄 For more details, see the [full report](docs/report/Trabalho_Circuitos.pdf) (in Portuguese).
 
-## 👥 Colaboradores
+## 👥 Contributors
 
 - [Luisa Ferreira](https://github.com/luisaferreirass)
 - [Kauã do Vale Ferreira](https://github.com/DevlTz)
 - [Cícero Paulino de Oliveira Filho](https://github.com/ciceropaulino)
 - [Ryan David dos Santos Silvestre](https://github.com/RyanSilv257)
 
-## 🎯 Objetivos
+## 🎯 Goals
 
-O objetivo principal é desenvolver um sistema robusto e eficiente para controlar a operação de múltiplos elevadores. A arquitetura é rigidamente dividida para garantir modularidade e clareza:
+The main goal is to develop a robust and efficient system to control the operation of multiple elevators. The architecture is strictly divided to ensure modularity and clarity:
 
-1. **Nível 1 (Controlador Local - 3x):** Gerencia as operações físicas de cada elevador individual (motor, portas, registro de andar)
-2. **Nível 2 (Escalonador/Supervisor - 1x):** Gerencia todas as chamadas externas, decide qual dos três elevadores deve atender cada requisição e distribui comandos para os controladores locais
+1. **Level 1 (Local Controller - 3x):** Manages the physical operations of each individual elevator (motor, doors, floor register)
+2. **Level 2 (Scheduler/Supervisor - 1x):** Manages all external calls, decides which of the three elevators should serve each request and dispatches commands to the local controllers
 
-Todo o projeto é validado através de simulação com testbenches em VHDL.
+The whole project is validated through simulation with VHDL testbenches.
 
-## 🏗️ Arquitetura Geral
+## 🏗️ Overall Architecture
 
-A arquitetura segue o modelo de controle hierárquico de dois níveis:
+The architecture follows a two-level hierarchical control model:
 
-![Diagrama de blocos do sistema de controle de três elevadores](docs/diagramas_projeto/diagrama2710.png)
+![Block diagram of the three-elevator control system](docs/diagramas_projeto/diagrama2710.png)
 
-### Módulos Principais
+### Main Modules
 
-| Módulo | Função | Lógica Principal |
+| Module | Role | Main Logic |
 |--------|--------|------------------|
-| **Escalonador (Supervisor)** | Gerencia chamadas externas, aplica o algoritmo de escalonamento e distribui requisições aos elevadores | Lógica de seleção e FSM de alto nível |
-| **Controlador Local (3x)** | Coordena a operação de cada elevador (motor e porta). Recebe chamadas internas e requisições do Escalonador | FSM principal com estados: `IDLE`, `MOVENDO`, `ABRINDO_PORTA`, `PORTA_ABERTA`, `FECHANDO_PORTA` |
-| **Componentes (Motor, Porta)** | Componentes "executores" que obedecem aos comandos dos Controladores Locais | FSM para o Motor (`PARADO`, `SUBINDO`, `DESCENDO`, `FREANDO`) e lógica sequencial para a Porta |
+| **Scheduler (Supervisor)** | Manages external calls, applies the scheduling algorithm and dispatches requests to the elevators | Selection logic and high-level FSM |
+| **Local Controller (3x)** | Coordinates the operation of each elevator (motor and door). Receives internal calls and requests from the Scheduler | Main FSM with states: `IDLE`, `MOVENDO` (moving), `ABRINDO_PORTA` (opening door), `PORTA_ABERTA` (door open), `FECHANDO_PORTA` (closing door) |
+| **Components (Motor, Door)** | "Executor" components that follow the Local Controllers' commands | FSM for the Motor (`PARADO` stopped, `SUBINDO` going up, `DESCENDO` going down, `FREANDO` braking) and sequential logic for the Door |
 
-## 🔌 Interface de Sinais (Top-Level)
+## 🔌 Signal Interface (Top-Level)
 
-O módulo top-level é o ponto de conexão de todos os blocos do sistema.
+The top-level module is the connection point for all blocks in the system.
 
-### Entradas Globais (do Testbench)
+### Global Inputs (from the Testbench)
 
-- `clk`, `rst`: Clock global e reset
-- `chamadas_externas_subir [0..30]`: Botões de subida dos andares
-- `chamadas_externas_descer [1..31]`: Botões de descida dos andares
-- `chamadas_internas_E1, E2, E3 [0..31]`: Painéis internos de cada elevador
-- `sensor_andar_E1, E2, E3 [0..31]`: Sensores de posição (simulados)
+- `clk`, `rst`: Global clock and reset
+- `chamadas_externas_subir [0..30]`: Up call buttons on each floor
+- `chamadas_externas_descer [1..31]`: Down call buttons on each floor
+- `chamadas_internas_E1, E2, E3 [0..31]`: Internal panels of each elevator
+- `sensor_andar_E1, E2, E3 [0..31]`: Position sensors (simulated)
 
-### Saídas Globais (para Displays/Testbench)
+### Global Outputs (to Displays/Testbench)
 
-- `display_andar_E1, E2, E3`: Indicador de andar atual
-- `display_porta_E1, E2, E3`: Indicador de porta (aberta ou fechada)
-- `display_direcao_E1, E2, E3`: Indicador de movimento (subindo ou descendo)
+- `display_andar_E1, E2, E3`: Current floor indicator
+- `display_porta_E1, E2, E3`: Door indicator (open or closed)
+- `display_direcao_E1, E2, E3`: Movement indicator (going up or down)
 
-## 📊 Estratégia de Escalonamento
+## 📊 Scheduling Strategy
 
-O projeto utiliza primariamente o método **Scan (Elevador Varredura)**.
+The project primarily uses the **Scan (elevator sweep)** method.
 
-### Método Scan
+### Scan Method
 
-Consiste em percorrer todos os andares em um único sentido (para cima ou para baixo), atendendo todas as requisições no caminho. A direção só é invertida ao atingir os limites do edifício (térreo ou cobertura) ou a última requisição pendente naquela direção.
+The elevator travels through all floors in a single direction (up or down), serving every request along the way. The direction is only reversed when it reaches the building limits (ground floor or top floor) or the last pending request in that direction.
 
-**Vantagens:**
-- Implementação simples e clara
-- Comportamento previsível
-- Adequado para implementação estrutural em VHDL
+**Advantages:**
+- Simple and clear implementation
+- Predictable behavior
+- Well suited to a structural VHDL implementation
 
-### Alternativas Consideradas
+### Alternatives Considered
 
-Foram avaliadas as seguintes abordagens:
+The following approaches were evaluated:
 
-- **Scan básico** (escolhida): Simplicidade de implementação
-- **Proximidade e Precedência**: Embora mais eficiente em termos de tempo de espera, foi considerada excessivamente complexa para a implementação estrutural em VHDL do projeto
+- **Basic Scan** (chosen): Simple to implement
+- **Proximity and Precedence**: Although more efficient in terms of waiting time, it was considered too complex for the project's structural VHDL implementation
 
-## ⚙️ Parâmetros do Sistema
+## ⚙️ System Parameters
 
-| Parâmetro | Valor | Notas |
+| Parameter | Value | Notes |
 |-----------|-------|-------|
-| **Número de Andares** | 32 (0 a 31) | Térreo a cobertura |
-| **Número de Elevadores** | 3 | Operação simultânea |
-| **Timer da Porta** | 250.000.000 ciclos | Equivalente a 5 segundos com clock de 50MHz |
-| **Clock do Sistema** | 50 MHz | Frequência padrão |
-| **Tempos de Operação** | Variáveis | Definidos nos módulos Motor e Porta |
+| **Number of Floors** | 32 (0 to 31) | Ground floor to top floor |
+| **Number of Elevators** | 3 | Simultaneous operation |
+| **Door Timer** | 250,000,000 cycles | Equivalent to 5 seconds with a 50MHz clock |
+| **System Clock** | 50 MHz | Default frequency |
+| **Operation Times** | Variable | Defined in the Motor and Door modules |
 
-## 🎮 Máquinas de Estados
+## 🎮 State Machines
 
-### Controlador Local (Elevador)
+### Local Controller (Elevator)
 ```
 IDLE → MOVENDO → FREANDO → ABRINDO_PORTA → PORTA_ABERTA → FECHANDO_PORTA → IDLE
 ```
@@ -118,70 +118,70 @@ PARADO ↔ SUBINDO
        ↔ FREANDO
 ```
 
-## 🧪 Simulação e Testes
+## 🧪 Simulation and Testing
 
-O projeto inclui testbenches completos para validação de todos os módulos e cenários de operação.
+The project includes complete testbenches to validate every module and operating scenario.
 
-### Como Executar as Simulações
+### How to Run the Simulations
 ```bash
-# Clone o repositório
+# Clone the repository
 git clone https://github.com/DevlTz/Logic_Circuits_Elevator.git
 cd Logic_Circuits_Elevator
 
-# Torne o script executável
+# Make the script executable
 chmod u+x testbench.sh
 
-# Execute o script de simulação
+# Run the simulation script
 ./testbench.sh
 ```
 
-### Cenários de Teste
+### Test Scenarios
 
-- ✅ Chamadas externas simultâneas
-- ✅ Chamadas internas de múltiplos elevadores
-- ✅ Casos de borda (térreo e cobertura)
-- ✅ Operação de portas com timer
-- ✅ Escalonamento com múltiplas requisições
-- ✅ Reset e inicialização do sistema
+- ✅ Simultaneous external calls
+- ✅ Internal calls from multiple elevators
+- ✅ Edge cases (ground floor and top floor)
+- ✅ Timed door operation
+- ✅ Scheduling with multiple requests
+- ✅ System reset and initialization
 
 
-## 🚀 Funcionalidades Implementadas
+## 🚀 Implemented Features
 
-- ✅ **Controle de 3 elevadores independentes**
-- ✅ **32 andares (0-31)**
-- ✅ **Algoritmo de escalonamento Scan**
-- ✅ **Chamadas externas (subir/descer)**
-- ✅ **Chamadas internas (painéis)**
-- ✅ **Controle automático de portas**
-- ✅ **Sensores de andar**
-- ✅ **Displays de status (andar, porta, direção)**
-- ✅ **Arquitetura hierárquica modular**
-- ✅ **Validação completa via testbench**
+- ✅ **Control of 3 independent elevators**
+- ✅ **32 floors (0-31)**
+- ✅ **Scan scheduling algorithm**
+- ✅ **External calls (up/down)**
+- ✅ **Internal calls (panels)**
+- ✅ **Automatic door control**
+- ✅ **Floor sensors**
+- ✅ **Status displays (floor, door, direction)**
+- ✅ **Modular hierarchical architecture**
+- ✅ **Full validation via testbench**
 
-## 🛠️ Ferramentas Utilizadas
+## 🛠️ Tools Used
 
-- **VHDL** - Linguagem de descrição de hardware
-- **ModelSim/GHDL** - Simulador VHDL
-- **GTKWave** - Visualizador de formas de onda (opcional)
+- **VHDL** - Hardware description language
+- **ModelSim/GHDL** - VHDL simulator
+- **GTKWave** - Waveform viewer (optional)
 
-## 📚 Conceitos Aplicados
+## 📚 Concepts Applied
 
-- Máquinas de Estados Finitos (FSM)
-- Arquitetura hierárquica
-- Sincronização de processos
-- Algoritmos de escalonamento
-- Controle em tempo real
-- Design modular
-- Validação por simulação
+- Finite State Machines (FSM)
+- Hierarchical architecture
+- Process synchronization
+- Scheduling algorithms
+- Real-time control
+- Modular design
+- Validation through simulation
 
-## 🤝 Contribuindo
+## 🤝 Contributing
 
-Este é um projeto acadêmico. Para sugestões ou melhorias, entre em contato com os colaboradores.
+This is an academic project. For suggestions or improvements, please contact the contributors.
 
-## 📄 Licença
+## 📄 License
 
-Este projeto foi desenvolvido para fins educacionais como parte da disciplina de Circuitos Digitais (UFRN).
+This project was developed for educational purposes as part of the Digital Circuits course (UFRN).
 
-## 👨‍💻 Autores
+## 👨‍💻 Authors
 
-Desenvolvido por [Luisa Ferreira](https://github.com/luisaferreirass), [Kauã do Vale](https://github.com/DevlTz), [Cícero Paulino](https://github.com/ciceropaulino) e [Ryan Silvestre](https://github.com/RyanSilv257)
+Developed by [Luisa Ferreira](https://github.com/luisaferreirass), [Kauã do Vale](https://github.com/DevlTz), [Cícero Paulino](https://github.com/ciceropaulino) and [Ryan Silvestre](https://github.com/RyanSilv257)
